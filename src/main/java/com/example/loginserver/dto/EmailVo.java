@@ -1,4 +1,4 @@
-package com.example.loginserver.vo;
+package com.example.loginserver.dto;
 
 public class EmailVo {
     private String sendTo;

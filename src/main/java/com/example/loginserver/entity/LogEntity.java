@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "login",schema = "public")
+@Table(name = "log",schema = "public")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -21,8 +21,9 @@ public class LogEntity implements Serializable{
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @Column(name = "user_id")
-    private long userId;
+    @Basic(optional = false)
+    @Column(name = "company_id")
+    private long company_id;
     @Column(name = "password")
     private String password;
     @Basic(optional = false)
@@ -30,9 +31,17 @@ public class LogEntity implements Serializable{
     private String ip;
     @Basic(optional = false)
     @Column(name = "success")
-    private String success;
+    private boolean success;
+
     @Basic(optional = false)
-    @Column(name = "date")
+    @Column(name = "log")
+    private String log;
+    @Basic(optional = false)
+    @Column(name = "time")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
+    private Date time;
+
+    public boolean getSuccess() {
+        return success;
+    }
 }

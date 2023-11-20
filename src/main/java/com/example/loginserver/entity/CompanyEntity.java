@@ -8,30 +8,24 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "user",schema = "public")
+@Table(name = "company",schema = "public")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UserInfoEntity implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class CompanyEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    private Long id;
+    private long id;
     @Basic(optional = false)
-    @Column(name = "first_name")
-    private String fname;
+    @Column(name = "mail")
+    private String mail;
     @Basic(optional = false)
-    @Column(name = "last_name")
-    private String lname;
-    @Basic(optional = false)
-    @Column(name = "email")
-    private String email;
-    @Basic(optional = false)
-    @Column(name = "nickname")
-    private String nickname;
+    @Column(name = "name")
+    private String name;
     @Basic(optional = false)
     @Column(name = "secret_key")
     private String secretKey;
+
 }

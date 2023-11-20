@@ -1,15 +1,15 @@
 package com.example.loginserver.server;
 
-import Errors.PasswordError;
-import Logic.PasswordCheck;
+import com.example.loginserver.Errors.PasswordError;
+import com.example.loginserver.Logic.PasswordCheck;
 import com.example.loginserver.entity.PasswordEntity;
 import com.example.loginserver.repository.PasswordRepository;
-import com.example.loginserver.vo.PasswordVo;
+import com.example.loginserver.dto.PasswordVo;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -25,46 +25,38 @@ public class PasswordServer {
 
     public PasswordError save(PasswordVo passwordVo){
         PasswordError e;
-        e=changePassForUpdate(passwordVo.getUserId(), passwordVo.getPassword());
-        if(e!=PasswordError.GOOD){
-            return e;
-        }
-        e= PasswordCheck.checkPassObject(PasswordVo);
+        e= PasswordCheck.checkPassValid(passwordVo);
         if(e!=PasswordError.GOOD){
             return e;
         }
         PasswordEntity bean= new PasswordEntity();
-        bean.setDate(new Date());
         BeanUtils.copyProperties(passwordVo,bean);
-        passwordRepository.save(bean);
+            passwordRepository.save(bean);
         return PasswordError.GOOD;
     }
 
-    public PasswordError delete(long id){
-        passwordRepository.deleteById(id);
-        return PasswordError.GOOD;
-    }
-    public PasswordError update(PasswordVo passwordVo){
+    public PasswordError Update(PasswordVo passwordVo){
         PasswordError e;
-        e=changePassForUpdate(passwordVo.getUserId(),passwordVo.getPassword());
+        e=changePassForUpdate(passwordVo.getCompany_id(),passwordVo.getPassword());
         if(e!=PasswordError.GOOD){
             return e;
         }
         PasswordEntity bean;
-        bean=geyById(passwordVo.getId());
+        bean=getById(passwordVo.getId());
         BeanUtils.copyProperties(passwordVo,bean);
         passwordRepository.save(bean);
         return PasswordError.GOOD;
     }
-    private PasswordEntity geyById(long id){
+    private PasswordEntity getById(long id){
         PasswordEntity user=passwordRepository.findById(id).orElseThrow(()->new NoSuchElementException("Not Found!!!"));
         return user;
     }
+
     private PasswordError changePassForUpdate(long id,String password){
         Optional<List<PasswordEntity>> passwordEntity;
         passwordEntity=passwordRepository.getAllById(id);
         if(!passwordEntity.isPresent()){
-            return PasswordError.UserNotFound;
+            return PasswordError.COMPANY_NOT_FOUND;
         }
         String passEntity=passwordEntity.get().get(passwordEntity.get().size()-1).getPassword();
         if(passEntity.equals(password)){
@@ -72,10 +64,23 @@ public class PasswordServer {
         }
         for (int i = 0; i < passwordEntity.get().size(); i++) {
             if(passwordEntity.get().get(i).equals(password)){
-                return PasswordError.PastUse;
+                return PasswordError.ALREADY_USED;
             }
         }
         return PasswordError.GOOD;
+    }
+
+    public String hashedPassword(PasswordVo passwordVo){
+        String hashed = BCrypt.hashpw(passwordVo.getPassword(), BCrypt.gensalt());
+        return hashed;
+    }
+
+    public PasswordError hashedPasswordMatche(String inputPassword, PasswordVo passwordVo){
+        if (BCrypt.checkpw(inputPassword, hashedPassword(passwordVo))){
+            return PasswordError.GOOD;
+        }
+        else
+            return PasswordError.PASSWORDS_NOT_MATCHES;
     }
 
 }

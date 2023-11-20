@@ -21,14 +21,10 @@ public class PasswordEntity implements Serializable{
     @Column(name = "id")
     private Long id;
     @Basic(optional = false)
-    @Column(name = "user_id")
-    private long userId;
+    @Column(name = "company_id")
+    private long company_id;
     @Basic(optional = false)
     @Column(name = "password")
     private String password;
-    @Basic(optional = false)
-    @Column(name = "date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
 
 }
