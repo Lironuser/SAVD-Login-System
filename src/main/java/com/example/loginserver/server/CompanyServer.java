@@ -2,7 +2,6 @@ package com.example.loginserver.server;
 
 import com.example.loginserver.Authenticator;
 import com.example.loginserver.Errors.CompanyError;
-import com.example.loginserver.Logic.MailCheck;
 import com.example.loginserver.dto.CompanyVo;
 import com.example.loginserver.entity.CompanyEntity;
 import com.example.loginserver.repository.CompanyRepository;
@@ -38,23 +37,26 @@ public class CompanyServer {
     public CompanyError update(CompanyVo company){
         Optional<CompanyEntity> companyEntity;
         companyEntity=repository.getCompanyById(company.getId());
-        try{
-            CompanyEntity bean = new CompanyEntity();
-            BeanUtils.copyProperties(companyEntity.get(),bean);
-            if (company.getName() != null){ //האם המשתמש רוצה לשנות את השם של החברה
-                bean.setName(company.getName());
-            }
-            if (company.getMail() != null ){    //האם המשתמש רוצה לשנות את המייל של החברה
-                if (checkCompany(bean) == CompanyError.GOOD){
-                    bean.setMail(company.getMail());
+        if (companyEntity.isPresent()){
+            try{
+                CompanyEntity bean = new CompanyEntity();
+                BeanUtils.copyProperties(companyEntity.get(),bean);
+                if (company.getName() != null){ //האם המשתמש רוצה לשנות את השם של החברה
+                    bean.setName(company.getName());
                 }
+                if (company.getMail() != null ){    //האם המשתמש רוצה לשנות את המייל של החברה
+                    if (checkCompany(bean) == CompanyError.GOOD){
+                        bean.setMail(company.getMail());
+                    }
+                }
+                repository.save(bean);
+            }catch (Exception e){
+                System.out.println(e);
+                return CompanyError.ELSE_ERROR;
             }
-            repository.save(bean);
-        }catch (Exception e){
-            System.out.println(e);
-            return CompanyError.ELSE_ERROR;
+            return CompanyError.GOOD;
         }
-        return CompanyError.GOOD;
+        return CompanyError.COMPANY_NOT_FOUND;
     }
 //    public CompanyVo getCompanyByCompanyName(String name){
 //        CompanyEntity company=getByCompanyName(name);
@@ -70,10 +72,6 @@ public class CompanyServer {
             return e;
         }
 
-        e = MailCheck.checkEmail(company.getMail());    //בודק אם המייל תקין
-        if (e != CompanyError.GOOD) {
-            return e;
-        }
         return CompanyError.GOOD;
     }
     private CompanyError checkComapnyIsSystem(long id){

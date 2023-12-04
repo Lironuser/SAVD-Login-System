@@ -1,7 +1,6 @@
 package com.example.loginserver.server;
 
 import com.example.loginserver.Errors.LogsError;
-import com.example.loginserver.dto.CompanyVo;
 import com.example.loginserver.dto.LogsVo;
 import com.example.loginserver.entity.LogEntity;
 import com.example.loginserver.repository.LogRepository;
@@ -67,7 +66,6 @@ public class LogServer {
 
     public LogsError check_spam(String ip, Date dateUser){
         // יצירת אובייקט Date עם הזמן הנוכחי
-        Date currentDate = new Date();
         Calendar cal = Calendar.getInstance();
         cal.setTime(dateUser);
         cal.add(Calendar.MINUTE, - getTimeBetweenSpam());

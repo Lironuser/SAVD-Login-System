@@ -31,4 +31,5 @@ public class CompanyController {
         CompanyVo company = server.getCompanyByCompanyId(companyVo);
         return company;
     }
+
 }

@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LogRepository extends JpaRepository<LogEntity,Long> {
-    @Query(value = "SELECT * FROM LogEntity where user_id=?1 ORDER BY \"date\" DESC LIMIT ?2",nativeQuery = true)
+    @Query(value = "SELECT * FROM LogEntity where company_id=?1 ORDER BY \"date\" DESC LIMIT ?2",nativeQuery = true)
     Optional<List<LogEntity>> CheckBlock(long id, int sizeBLock);
     @Query(value = "SELECT * FROM LogEntity WHERE ip = ?1 AND \"date\" >= ?2", nativeQuery = true)
     Optional<List<LogEntity>> CheckSpam(String ip, Timestamp timestamp);
     @Query(value = "SELECT e FROM CompanyEntity e WHERE e.id=:company_id")
-    Optional<LogEntity>getCompanyByUserId(@Param("company_id")long id);
+    Optional<LogEntity>getCompanyByCompanyId(@Param("company_id")long id);
     @Query(value = "SELECT e FROM PasswordEntity e where e.company_id=:id ")
-    List<PasswordEntity> getPassByCompanyId(@Param("id") long userId);
+    List<PasswordEntity> getPasswordByCompanyId(@Param("id") long userId);
 
     //@Query(value = "SELECT * FROM logs WHERE user_id=?1 AND seccess=true ORDER BY id DESC LIMIT 1",nativeQuery = true)
     //Optional<LogEntity> getLastSeccessLogin(long user_id);

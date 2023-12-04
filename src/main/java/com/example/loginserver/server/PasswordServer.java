@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static com.example.loginserver.Errors.PasswordError.GOOD;
+
 @Service
 public class PasswordServer {
     @Autowired
@@ -26,48 +28,49 @@ public class PasswordServer {
     public PasswordError save(PasswordVo passwordVo){
         PasswordError e;
         e= PasswordCheck.checkPassValid(passwordVo);
-        if(e!=PasswordError.GOOD){
+        if(e!= GOOD){
             return e;
         }
         PasswordEntity bean= new PasswordEntity();
         BeanUtils.copyProperties(passwordVo,bean);
             passwordRepository.save(bean);
-        return PasswordError.GOOD;
+        return GOOD;
     }
 
     public PasswordError Update(PasswordVo passwordVo){
         PasswordError e;
-        e=changePassForUpdate(passwordVo.getCompany_id(),passwordVo.getPassword());
-        if(e!=PasswordError.GOOD){
+        e=changePassForUpdate(passwordVo);
+        if(e!= GOOD){
             return e;
         }
         PasswordEntity bean;
         bean=getById(passwordVo.getId());
         BeanUtils.copyProperties(passwordVo,bean);
         passwordRepository.save(bean);
-        return PasswordError.GOOD;
+        return GOOD;
     }
     private PasswordEntity getById(long id){
         PasswordEntity user=passwordRepository.findById(id).orElseThrow(()->new NoSuchElementException("Not Found!!!"));
         return user;
     }
 
-    private PasswordError changePassForUpdate(long id,String password){
-        Optional<List<PasswordEntity>> passwordEntity;
-        passwordEntity=passwordRepository.getAllById(id);
-        if(!passwordEntity.isPresent()){
+    private PasswordError changePassForUpdate(PasswordVo passwordVo){
+        Optional<List<PasswordEntity>> passwordEntityList;
+        passwordEntityList=passwordRepository.getAllById(passwordVo.getCompany_id());
+        if(!passwordEntityList.isPresent()){
             return PasswordError.COMPANY_NOT_FOUND;
         }
-        String passEntity=passwordEntity.get().get(passwordEntity.get().size()-1).getPassword();
-        if(passEntity.equals(password)){
+        Optional<PasswordEntity> passwordEntity;
+        passwordEntity = passwordRepository.getPasswordById(passwordVo.getCompany_id());
+        if(hashedPasswordMatche(passwordVo, passwordEntity.get()) == GOOD){
             return PasswordError.TheSamePassword;
         }
-        for (int i = 0; i < passwordEntity.get().size(); i++) {
-            if(passwordEntity.get().get(i).equals(password)){
+        for (int i = 0; i < passwordEntityList.get().size(); i++) {
+            if(passwordEntityList.get().get(i).equals(passwordVo.getPassword())){
                 return PasswordError.ALREADY_USED;
             }
         }
-        return PasswordError.GOOD;
+        return GOOD;
     }
 
     public String hashedPassword(PasswordVo passwordVo){
@@ -75,9 +78,9 @@ public class PasswordServer {
         return hashed;
     }
 
-    public PasswordError hashedPasswordMatche(String inputPassword, PasswordVo passwordVo){
-        if (BCrypt.checkpw(inputPassword, hashedPassword(passwordVo))){
-            return PasswordError.GOOD;
+    public PasswordError hashedPasswordMatche(PasswordVo passwordVo, PasswordEntity passwordEntity){
+        if (BCrypt.checkpw(hashedPassword(passwordVo), passwordEntity.getPassword())){
+            return GOOD;
         }
         else
             return PasswordError.PASSWORDS_NOT_MATCHES;

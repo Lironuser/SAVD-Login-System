@@ -9,7 +9,6 @@ import java.util.Date;
 public class LogsVo {
     private Long id;
     private long company_id;
-
     private String password;
     //Addon
     private LogsError error;
