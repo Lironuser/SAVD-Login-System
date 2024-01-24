@@ -16,7 +16,6 @@ public class LogController {
     private LogServer server;
     private LogsError e;
 
-
     @PostMapping("/save")
     public LogsError save_log(@RequestBody LogsVo log, HttpServletRequest request){
         e = server.save(log, request.getRemoteAddr());

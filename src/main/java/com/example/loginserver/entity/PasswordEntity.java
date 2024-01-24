@@ -22,7 +22,7 @@ public class PasswordEntity implements Serializable{
     private Long id;
     @Basic(optional = false)
     @Column(name = "company_id")
-    private long company_id;
+    private Long company_id;
     @Basic(optional = false)
     @Column(name = "password")
     private String password;

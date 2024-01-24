@@ -2,6 +2,7 @@ package com.example.loginserver.server;
 
 import com.example.loginserver.Authenticator;
 import com.example.loginserver.Errors.CompanyError;
+import com.example.loginserver.Logic.CompanyCheck;
 import com.example.loginserver.dto.CompanyVo;
 import com.example.loginserver.entity.CompanyEntity;
 import com.example.loginserver.repository.CompanyRepository;
@@ -15,17 +16,19 @@ import java.util.Optional;
 public class CompanyServer {
     @Autowired
     private CompanyRepository repository;
-    private CompanyError e;
     public CompanyError save(CompanyVo company){
         Optional<CompanyEntity> userEntity;
-        userEntity=repository.getCompanyByName(company.getName());
+        userEntity=repository.getObjByName(company.getName());
         if(userEntity.isPresent()){ //אם יש כבר חברה כזאת
             return CompanyError.COMPANY_EXIT;
+        }
+        if (CompanyCheck.checkCompanyName(company.getName()) != CompanyError.GOOD){
+            return CompanyError.NOT_VALID_NAME;
         }
         try {
             CompanyEntity bean=new CompanyEntity();
             company.setSecret_key(Authenticator.generateSecretKey());
-            BeanUtils.copyProperties(company,bean); //מעתיק את הנתונים ל"בין"
+            BeanUtils.copyProperties(company,bean); //מעתיק את הנתונים ל"שעוית"
             repository.save(bean);
         }catch (Exception e){
             System.out.println(e);
@@ -36,8 +39,11 @@ public class CompanyServer {
 
     public CompanyError update(CompanyVo company){
         Optional<CompanyEntity> companyEntity;
-        companyEntity=repository.getCompanyById(company.getId());
+        companyEntity=repository.getObjById(company.getId());
         if (companyEntity.isPresent()){
+            if (CompanyCheck.checkCompanyName(company.getName()) != CompanyError.GOOD){
+                return CompanyError.NOT_VALID_NAME;
+            }
             try{
                 CompanyEntity bean = new CompanyEntity();
                 BeanUtils.copyProperties(companyEntity.get(),bean);
@@ -58,13 +64,7 @@ public class CompanyServer {
         }
         return CompanyError.COMPANY_NOT_FOUND;
     }
-//    public CompanyVo getCompanyByCompanyName(String name){
-//        CompanyEntity company=getByCompanyName(name);
-//        CompanyVo companyVo=new CompanyVo();
-//        BeanUtils.copyProperties(company,companyVo);
-//        return companyVo;
-//    }
-    //בדיקת המשתמש בכללי בעצם קורא לכל הפונקציות
+
     private CompanyError checkCompany(CompanyEntity company) {
         CompanyError e;
         e = checkComapnyIsSystem(company.getId());  //בודק האם קיימת כבר חברה כזאת
@@ -89,7 +89,7 @@ public class CompanyServer {
 
     public  CompanyVo getCompanyByCompanyId(CompanyVo companyVo){
         Optional<CompanyEntity> companyEntity;
-        companyEntity = repository.getCompanyById(companyVo.getId());
+        companyEntity = repository.getObjById(companyVo.getId());
         if (companyEntity.isPresent()){
             BeanUtils.copyProperties(companyEntity, companyVo);
             return companyVo;

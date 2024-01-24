@@ -27,7 +27,7 @@ public class PasswordServer {
 
     public PasswordError save(PasswordVo passwordVo){
         PasswordError e;
-        e= PasswordCheck.checkPassValid(passwordVo);
+        e= PasswordCheck.checkPassValid(passwordVo.getPassword());
         if(e!= GOOD){
             return e;
         }
@@ -56,12 +56,12 @@ public class PasswordServer {
 
     private PasswordError changePassForUpdate(PasswordVo passwordVo){
         Optional<List<PasswordEntity>> passwordEntityList;
-        passwordEntityList=passwordRepository.getAllById(passwordVo.getCompany_id());
+        passwordEntityList=passwordRepository.getAllObjById(passwordVo.getCompany_id());
         if(!passwordEntityList.isPresent()){
             return PasswordError.COMPANY_NOT_FOUND;
         }
         Optional<PasswordEntity> passwordEntity;
-        passwordEntity = passwordRepository.getPasswordById(passwordVo.getCompany_id());
+        passwordEntity = passwordRepository.getObjById(passwordVo.getCompany_id());
         if(hashedPasswordMatche(passwordVo, passwordEntity.get()) == GOOD){
             return PasswordError.TheSamePassword;
         }

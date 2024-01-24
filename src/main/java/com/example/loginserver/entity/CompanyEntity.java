@@ -26,6 +26,7 @@ public class CompanyEntity implements Serializable {
     private String name;
     @Basic(optional = false)
     @Column(name = "secret_key")
-    private String secretKey;
+    private String secret_key;
+
 
 }

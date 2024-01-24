@@ -11,8 +11,14 @@ import java.util.Optional;
 @Repository
 public interface CompanyRepository extends JpaRepository<CompanyEntity,Long> {
     @Query("SELECT e FROM CompanyEntity e WHERE e.name=:name")
-    Optional<CompanyEntity> getCompanyByName(@Param("name") String name);
+    Optional<CompanyEntity> getObjByName(@Param("name") String name);
 
     @Query("SELECT e FROM CompanyEntity e WHERE e.id=:id")
-    Optional<CompanyEntity> getCompanyById(@Param("id") long id);
+    Optional<CompanyEntity> getObjById(@Param("id") long id);
+
+    @Query("SELECT e FROM CompanyEntity e WHERE e.mail=:mail")
+    Optional<CompanyEntity> getobjIdByMail(@Param("mail") String mail);
+
+    @Query("SELECT id FROM CompanyEntity WHERE mail=:mail")
+    Optional<CompanyEntity> getCompanyIdByMail(@Param("mail") String mail);
 }

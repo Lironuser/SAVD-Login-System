@@ -9,5 +9,6 @@ public enum CompanyError {
     COMPANY_NOT_FOUND,
     COMPANY_EXIT,
     NOT_CHANGED,
-    NOT_VALID_MAIL
+    NOT_VALID_MAIL,
+    NOT_VALID_NAME;
 }

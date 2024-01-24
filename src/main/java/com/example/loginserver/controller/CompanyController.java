@@ -16,8 +16,8 @@ public class CompanyController {
     private CompanyServer server;
     private CompanyError e;
     @PostMapping("/create")
-    public CompanyError addCompany(@RequestBody CompanyVo userVO){
-        e = server.save(userVO);
+    public CompanyError addCompany(@RequestBody CompanyVo companyVO){
+        e = server.save(companyVO);
         return e;
     }
 

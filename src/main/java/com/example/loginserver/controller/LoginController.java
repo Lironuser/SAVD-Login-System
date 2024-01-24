@@ -3,15 +3,14 @@ package com.example.loginserver.controller;
 import com.example.loginserver.Errors.CompanyError;
 import com.example.loginserver.Errors.LoginError;
 import com.example.loginserver.dto.CompanyVo;
+import com.example.loginserver.dto.LoginVo;
 import com.example.loginserver.dto.PasswordVo;
 import com.example.loginserver.server.CompanyServer;
 import com.example.loginserver.server.LoginServer;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Validated
 @RequestMapping("/login")
@@ -21,9 +20,9 @@ public class LoginController {
     private LoginServer server;
     private LoginError e;
 
-    @PutMapping("/Connection")
-    public LoginError checkConnection(CompanyVo companyVo, PasswordVo passwordVo){
-        e = server.checkValid(companyVo, passwordVo);
+    @PostMapping("/Connection")
+    public LoginError checkConnection(@RequestBody LoginVo login, HttpServletRequest request){
+        e = server.checkValid(login, request.getRemoteAddr());
         return e;
     }
 }

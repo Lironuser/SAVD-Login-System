@@ -4,5 +4,6 @@ public enum LoginError {
     GOOD,
     ELSE_ERROR,
     NOT_FOUND,
-    MISSING_INPUTS
+    MISSING_INPUTS,
+    YOUR_USER_IS_BLOCKED
 }

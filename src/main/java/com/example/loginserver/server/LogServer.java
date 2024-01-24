@@ -19,7 +19,7 @@ public class LogServer {
     @Autowired
     private LogRepository logRepository;
     private LogsError e;
-    private int timeBetweenSpam= 15;
+    private int timeBetweenSpam= 15;    //  בדקות
     public int getTimeBetweenSpam() {
         return timeBetweenSpam;
     }

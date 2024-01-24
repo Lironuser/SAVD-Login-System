@@ -5,7 +5,7 @@ import com.example.loginserver.dto.PasswordVo;
 
 public class PasswordCheck {
     private static PasswordError checkLength(String password){
-        if(password.length()<11 && password.length()>16){
+        if(password.length()<11 || password.length()>16){
             return PasswordError.LENGTH_ERROR;
         }
         return PasswordError.GOOD;
@@ -25,13 +25,13 @@ public class PasswordCheck {
         }
         return PasswordError.GOOD;
     }
-    public static PasswordError checkPassValid(PasswordVo passwordVo){
+    public static PasswordError checkPassValid(String password){
         PasswordError e;
-        e=checkLength(passwordVo.getPassword());
+        e=checkLength(password);
         if(e!= PasswordError.GOOD){
             return e;
         }
-        e=checkChars(passwordVo.getPassword());
+        e=checkChars(password);
         return e;
     }
 }
