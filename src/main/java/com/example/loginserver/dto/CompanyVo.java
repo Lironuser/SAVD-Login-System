@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class CompanyVo {
     private long id;
-    private String name;
+    private String comapny_name;
     private String mail;
     private String secret_key;
     //Addon

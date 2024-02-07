@@ -22,8 +22,8 @@ public class CompanyEntity implements Serializable {
     @Column(name = "mail")
     private String mail;
     @Basic(optional = false)
-    @Column(name = "name")
-    private String name;
+    @Column(name = "comapny_name")
+    private String comapny_name;
     @Basic(optional = false)
     @Column(name = "secret_key")
     private String secret_key;

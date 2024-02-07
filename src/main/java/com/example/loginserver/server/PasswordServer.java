@@ -15,6 +15,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static com.example.loginserver.Errors.PasswordError.GOOD;
+import static com.example.loginserver.Logic.PasswordCheck.hashPassword;
 
 @Service
 public class PasswordServer {
@@ -27,10 +28,11 @@ public class PasswordServer {
 
     public PasswordError save(PasswordVo passwordVo){
         PasswordError e;
-        e= PasswordCheck.checkPassValid(passwordVo.getPassword());
+        e = PasswordCheck.checkPassValid(passwordVo.getPassword());
         if(e!= GOOD){
             return e;
         }
+        passwordVo.setPassword(hashPassword(passwordVo.getPassword()));
         PasswordEntity bean= new PasswordEntity();
         BeanUtils.copyProperties(passwordVo,bean);
             passwordRepository.save(bean);
@@ -43,8 +45,8 @@ public class PasswordServer {
         if(e!= GOOD){
             return e;
         }
-        PasswordEntity bean;
-        bean=getById(passwordVo.getId());
+        PasswordEntity bean = getById(passwordVo.getId());
+        passwordVo.setPassword(hashPassword(passwordVo.getPassword()));
         BeanUtils.copyProperties(passwordVo,bean);
         passwordRepository.save(bean);
         return GOOD;
@@ -62,7 +64,7 @@ public class PasswordServer {
         }
         Optional<PasswordEntity> passwordEntity;
         passwordEntity = passwordRepository.getObjById(passwordVo.getCompany_id());
-        if(hashedPasswordMatche(passwordVo, passwordEntity.get()) == GOOD){
+        if(hashPassword(passwordVo.getPassword()).equals(passwordEntity.get())){
             return PasswordError.TheSamePassword;
         }
         for (int i = 0; i < passwordEntityList.get().size(); i++) {
@@ -76,14 +78,6 @@ public class PasswordServer {
     public String hashedPassword(PasswordVo passwordVo){
         String hashed = BCrypt.hashpw(passwordVo.getPassword(), BCrypt.gensalt());
         return hashed;
-    }
-
-    public PasswordError hashedPasswordMatche(PasswordVo passwordVo, PasswordEntity passwordEntity){
-        if (BCrypt.checkpw(hashedPassword(passwordVo), passwordEntity.getPassword())){
-            return GOOD;
-        }
-        else
-            return PasswordError.PASSWORDS_NOT_MATCHES;
     }
 
 }

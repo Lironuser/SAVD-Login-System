@@ -18,11 +18,11 @@ public class CompanyServer {
     private CompanyRepository repository;
     public CompanyError save(CompanyVo company){
         Optional<CompanyEntity> userEntity;
-        userEntity=repository.getObjByName(company.getName());
+        userEntity=repository.getObjByName(company.getComapny_name());
         if(userEntity.isPresent()){ //אם יש כבר חברה כזאת
             return CompanyError.COMPANY_EXIT;
         }
-        if (CompanyCheck.checkCompanyName(company.getName()) != CompanyError.GOOD){
+        if (CompanyCheck.checkCompanyName(company.getComapny_name()) != CompanyError.GOOD){
             return CompanyError.NOT_VALID_NAME;
         }
         try {
@@ -41,14 +41,14 @@ public class CompanyServer {
         Optional<CompanyEntity> companyEntity;
         companyEntity=repository.getObjById(company.getId());
         if (companyEntity.isPresent()){
-            if (CompanyCheck.checkCompanyName(company.getName()) != CompanyError.GOOD){
+            if (CompanyCheck.checkCompanyName(company.getComapny_name()) != CompanyError.GOOD){
                 return CompanyError.NOT_VALID_NAME;
             }
             try{
                 CompanyEntity bean = new CompanyEntity();
                 BeanUtils.copyProperties(companyEntity.get(),bean);
-                if (company.getName() != null){ //האם המשתמש רוצה לשנות את השם של החברה
-                    bean.setName(company.getName());
+                if (company.getComapny_name() != null){ //האם המשתמש רוצה לשנות את השם של החברה
+                    bean.setComapny_name(company.getComapny_name());
                 }
                 if (company.getMail() != null ){    //האם המשתמש רוצה לשנות את המייל של החברה
                     if (checkCompany(bean) == CompanyError.GOOD){
